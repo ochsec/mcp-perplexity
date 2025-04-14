@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mcp-perplexity:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcp-perplexity
+    environment:
+      # Logging and Python Configuration
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - PYTHONUNBUFFERED=${PYTHONUNBUFFERED:-1}
+      - PYTHONFAULTHANDLER=${PYTHONFAULTHANDLER:-1}
+      
+      # API Keys (IMPORTANT: Ensure these are set in .env file)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY:-}
+      
+      # Perplexity Model Configuration
+      - PERPLEXITY_MODEL=${PERPLEXITY_MODEL:-sonar-pro}
+      - PERPLEXITY_MODEL_ASK=${PERPLEXITY_MODEL_ASK:-sonar-pro}
+      - PERPLEXITY_MODEL_CHAT=${PERPLEXITY_MODEL_CHAT:-sonar-reasoning-pro}
+      
+      # Database Configuration
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///mcp_perplexity.db}
+      - DB_PATH=${DB_PATH:-/app/data/perplexity.db}
+    
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    
+    volumes:
+      # Persistent volume for database and application data
+      - ./data:/app/data
+    
+    restart: unless-stopped
